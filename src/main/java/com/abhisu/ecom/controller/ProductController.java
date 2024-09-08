@@ -12,22 +12,14 @@ import java.util.List;
 
 @RestController
 public class ProductController {
-
     private ProductService service;
-
     @Autowired
     public ProductController(ProductService service){
         this.service = service;
     }
-
     @GetMapping("/product")
     public ResponseEntity<List<Product>> getAllProduct(){
 
-        List<Product> products = service.fillAllProduct();
-
-        if(products.isEmpty()){
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(service.fillAllProduct(), HttpStatus.OK);
     }
 }
