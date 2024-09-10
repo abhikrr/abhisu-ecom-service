@@ -1,46 +1,47 @@
 package com.abhisu.ecom.config;
 
-import com.abhisu.ecom.serviceimpl.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.abhisu.ecom.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import static org.springframework.security.config.Customizer.withDefaults;
-
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public DaoAuthenticationProvider authenticationProvider(UserService userService) {
+        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
+        auth.setUserDetailsService(userService); //set the custom user details service
+        auth.setPasswordEncoder(bCryptPasswordEncoder()); //set the password encoder - bcrypt
+        return auth;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/**").permitAll()  // Allow unauthenticated access to auth endpoints
-                .anyRequest().authenticated()  // All other endpoints need authentication
-                .and()
-                .httpBasic();  // For simplicity, using basic auth (use JWT or OAuth2 in production)
+        http.authorizeHttpRequests(configurer ->
+                configurer
+                        .requestMatchers(HttpMethod.GET, "/products").hasRole("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/products/**").hasRole("EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/products").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+
+        );
+
+        http.httpBasic(Customizer.withDefaults());
+
+        http.csrf(csrf -> csrf.disable());
 
         return http.build();
     }

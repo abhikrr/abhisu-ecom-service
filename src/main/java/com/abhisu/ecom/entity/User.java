@@ -3,10 +3,11 @@ package com.abhisu.ecom.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "user_tbl")
+@Table(name = "users_tbl")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,23 +15,27 @@ import java.util.Set;
 @EqualsAndHashCode
 @ToString
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
-    private String username;
+    @Column(name = "username")
+    private String userName;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "enabled")
+    private short enabled;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "user_role",
+            name = "users_roles_tbl",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
 
-    public User(String username, String password){
-        this.username = username;
-        this.password = password;
-    }
 }

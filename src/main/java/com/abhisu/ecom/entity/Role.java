@@ -1,11 +1,12 @@
 package com.abhisu.ecom.entity;
 
-import com.abhisu.ecom.emun.ERole;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
-@Table(name = "role_tbl")
+@Table(name = "roles_tbl")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,11 +14,12 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "role_id")
+    private Long roleId;
 
-    @Enumerated(EnumType.STRING)
-    private ERole name;  // Enum for role types like ADMIN, USER
-
+    @Column(name = "name")
+    private String name;
 }
