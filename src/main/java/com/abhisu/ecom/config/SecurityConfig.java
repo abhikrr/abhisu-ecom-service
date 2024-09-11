@@ -31,14 +31,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer ->
                 configurer
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/products/**").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
 
         );
-
+        http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
 
         http.csrf(csrf -> csrf.disable());

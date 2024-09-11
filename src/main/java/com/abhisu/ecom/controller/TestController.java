@@ -14,4 +14,9 @@ public class TestController {
         return new ResponseEntity<>(new ResponseDTO(HttpStatus.OK.value(), "Hello World!!"), HttpStatus.OK);
     }
 
+    @GetMapping("/")
+    public String showHome(){
+        return "home";
+    }
+
 }
