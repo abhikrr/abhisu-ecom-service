@@ -31,7 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer ->
                 configurer
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+//                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/products/**").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("MANAGER")
