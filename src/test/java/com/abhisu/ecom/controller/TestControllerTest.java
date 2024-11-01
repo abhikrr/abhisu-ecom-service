@@ -20,9 +20,9 @@ class TestControllerTest {
 
     @Test
     public void shouldReturnHelloWorld() throws Exception {
-        mockMvc.perform(get("/hello-world"))
+        mockMvc.perform(get("/test"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.desc").value("Hello World!!"));
+                .andExpect(jsonPath("$.desc").value("This is a test of Get API Controller"));
     }
 }
